@@ -1,0 +1,16 @@
+{
+	"endOfLine": "lf",
+	"quoteProps": "consistent",
+	"tabWidth": 4,
+	"overrides": [
+		{
+			"files": [
+				"*.json",
+				"*.yaml"
+			],
+			"options": {
+				"tabWidth": 2
+			}
+		}
+	]
+}

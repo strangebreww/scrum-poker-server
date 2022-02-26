@@ -1,0 +1,35 @@
+{
+	"name": "scrum-poker-server",
+	"version": "1.0.0",
+	"description": "Scrum poker server",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node src/server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/strangebreww/scrum-poker-server.git"
+	},
+	"keywords": [
+		"scrum",
+		"node"
+	],
+	"author": "Alexey Ermakov",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/strangebreww/scrum-poker-server/issues"
+	},
+	"homepage": "https://github.com/strangebreww/scrum-poker-server#readme",
+	"dependencies": {
+		"uuid": "^8.3.2",
+		"ws": "^8.5.0"
+	},
+	"devDependencies": {
+		"eslint": "^8.10.0",
+		"eslint-config-prettier": "^8.4.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"prettier": "^2.5.1"
+	}
+}
