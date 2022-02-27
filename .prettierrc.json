@@ -1,6 +1,7 @@
 {
 	"endOfLine": "lf",
 	"quoteProps": "consistent",
+	"useTabs": true,
 	"tabWidth": 4,
 	"overrides": [
 		{
