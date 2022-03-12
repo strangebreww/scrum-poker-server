@@ -14,6 +14,8 @@ wss.on("connection", (ws) => {
 
 	console.info("new client", id);
 
+	broadcastMessage(clients, "new client", id);
+
 	ws.send(JSON.stringify(messages));
 
 	ws.on("message", (rawMessage) => {
@@ -22,9 +24,7 @@ wss.on("connection", (ws) => {
 
 			messages.push({ name, message });
 
-			for (const id in clients) {
-				clients[id].send(JSON.stringify([{ name, message }]));
-			}
+			broadcastMessage(clients, name, message);
 		} catch (e) {
 			console.error(e.message);
 		}
@@ -34,6 +34,8 @@ wss.on("connection", (ws) => {
 		delete clients[id];
 
 		console.info("client is closed", id);
+
+		broadcastMessage(clients, "closed client", id);
 	});
 });
 
@@ -48,3 +50,9 @@ process.on("SIGINT", () => {
 		process.exit();
 	});
 });
+
+function broadcastMessage(clients, name, message) {
+	for (const id in clients) {
+		clients[id].send(JSON.stringify([{ name, message }]));
+	}
+}
