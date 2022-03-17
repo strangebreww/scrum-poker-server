@@ -12,19 +12,17 @@ wss.on("connection", (ws) => {
 	const id = uuid();
 	clients[id] = ws;
 
-	console.info("new client", id);
-
-	broadcastMessage(clients, "new client", id);
+	broadcastMessage(clients, "new client", { id, estimate: null });
 
 	ws.send(JSON.stringify(messages));
 
 	ws.on("message", (rawMessage) => {
 		try {
-			const { name, message } = JSON.parse(rawMessage.toString());
+			const { id, estimate } = JSON.parse(rawMessage.toString());
 
-			messages.push({ name, message });
+			messages.push({ id, estimate });
 
-			broadcastMessage(clients, name, message);
+			broadcastMessage(clients, "active client", { id, estimate });
 		} catch (e) {
 			console.error(e.message);
 		}
@@ -35,7 +33,7 @@ wss.on("connection", (ws) => {
 
 		console.info("client is closed", id);
 
-		broadcastMessage(clients, "closed client", id);
+		broadcastMessage(clients, "closed client", { id });
 	});
 });
 
