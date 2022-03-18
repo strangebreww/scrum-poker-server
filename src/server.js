@@ -4,7 +4,9 @@ import { WebSocketServer } from "ws";
 
 const clients = {};
 const log = existsSync("log") && readFileSync("log");
-const messages = JSON.parse(log) || [];
+console.log("log", JSON.parse(log));
+// const players = JSON.parse(log) || [];
+const players = [];
 
 const wss = new WebSocketServer({ port: 8000 });
 
@@ -12,15 +14,17 @@ wss.on("connection", (ws) => {
 	const id = uuid();
 	clients[id] = ws;
 
+	console.log("new client", id);
+
 	broadcastMessage(clients, "new client", { id, estimate: null });
 
-	ws.send(JSON.stringify(messages));
+	ws.send(JSON.stringify(players));
 
 	ws.on("message", (rawMessage) => {
 		try {
 			const { id, estimate } = JSON.parse(rawMessage.toString());
 
-			messages.push({ id, estimate });
+			players.push({ id, estimate });
 
 			broadcastMessage(clients, "active client", { id, estimate });
 		} catch (e) {
@@ -31,7 +35,7 @@ wss.on("connection", (ws) => {
 	ws.on("close", () => {
 		delete clients[id];
 
-		console.info("client is closed", id);
+		console.log("client is closed", id);
 
 		broadcastMessage(clients, "closed client", { id });
 	});
@@ -40,7 +44,7 @@ wss.on("connection", (ws) => {
 process.on("SIGINT", () => {
 	wss.close();
 
-	writeFile("log", JSON.stringify(messages), (err) => {
+	writeFile("log", JSON.stringify(players), (err) => {
 		if (err) {
 			console.error(err);
 		}
@@ -49,8 +53,8 @@ process.on("SIGINT", () => {
 	});
 });
 
-function broadcastMessage(clients, name, message) {
+function broadcastMessage(clients, type, payload) {
 	for (const id in clients) {
-		clients[id].send(JSON.stringify([{ name, message }]));
+		clients[id].send(JSON.stringify({ type, payload }));
 	}
 }
