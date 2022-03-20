@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFile } from "fs";
 import { v4 as uuid } from "uuid";
 import { WebSocketServer } from "ws";
+import { port } from "./config.js";
 
 const clients = {};
 const log = existsSync("log") && readFileSync("log");
@@ -8,7 +9,9 @@ console.log("log", JSON.parse(log));
 // const players = JSON.parse(log) || [];
 const players = [];
 
-const wss = new WebSocketServer({ port: 8000 });
+const wss = new WebSocketServer({ port });
+
+console.log("Server is running on port " + port);
 
 wss.on("connection", (ws) => {
 	const id = uuid();
