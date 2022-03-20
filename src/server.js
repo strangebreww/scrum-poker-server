@@ -1,13 +1,9 @@
-import { existsSync, readFileSync, writeFile } from "fs";
 import { v4 as uuid } from "uuid";
 import { WebSocketServer } from "ws";
 import { port } from "./config.js";
 
 const clients = {};
-const log = existsSync("log") && readFileSync("log");
-console.log("log", JSON.parse(log));
-// const players = JSON.parse(log) || [];
-const players = [];
+let players = [];
 
 const wss = new WebSocketServer({ port });
 
@@ -16,6 +12,7 @@ console.log("Server is running on port " + port);
 wss.on("connection", (ws) => {
 	const id = uuid();
 	clients[id] = ws;
+	players.push({ id, estimate: null });
 
 	console.log("new client", id);
 
@@ -37,22 +34,11 @@ wss.on("connection", (ws) => {
 
 	ws.on("close", () => {
 		delete clients[id];
+		players = players.filter((p) => p.id !== id);
 
 		console.log("client is closed", id);
 
 		broadcastMessage(clients, "closed client", { id });
-	});
-});
-
-process.on("SIGINT", () => {
-	wss.close();
-
-	writeFile("log", JSON.stringify(players), (err) => {
-		if (err) {
-			console.error(err);
-		}
-
-		process.exit();
 	});
 });
 
